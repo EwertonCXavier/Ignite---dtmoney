@@ -12,7 +12,7 @@ interface Transaction {
 }
 
 export function TransactionsTable() {
-    const transactions = useContext(TransactionsContext); //Remove todo o useEffect e deixa focado no TransactionsContext
+    const { transactions } = useContext(TransactionsContext); //Remove todo o useEffect e deixa focado no TransactionsContext
     return (
         <Container>
             <table>

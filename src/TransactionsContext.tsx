@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react';
 import { api } from './services/api';
 
 
-export const TransactionsContext = createContext<Transaction[]>([]);
-
 interface Transaction {
     id: number;
     title: string;
@@ -18,6 +16,31 @@ interface TransactionsProviderProps {
     children: ReactNode; //Aceita qualquer tipo de conteúdo do React (JSX, texto e outros)
 }
 
+// interface TransactionInput {
+//     title: string;
+//     amount: number;
+//     type: string;
+//     category: string;
+// }
+
+
+type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>; 
+    //Sintaxe para declaração de tipos em que é possível omitir alguns campos da referência
+
+// type TransactionInput = Pick<Transaction, 'title' | 'amount' | 'type' | 'category'>
+// 3° opção para declaração de tipos que derivam
+
+
+interface TransactionsContextData {
+    transactions: Transaction[];
+    createTransaction: (transaction: TransactionInput) => void;
+}
+
+
+
+export const TransactionsContext = createContext<TransactionsContextData>(
+    {} as TransactionsContextData
+)
 
 export function TransactionsProvider({children}: TransactionsProviderProps) {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -29,8 +52,14 @@ export function TransactionsProvider({children}: TransactionsProviderProps) {
             });
     }, []);
 
+    function createTransaction(transaction: TransactionInput) {    
+        api.post('/transactions', transaction);
+    }
+
     return (
-        <TransactionsContext.Provider value={transactions}>
+        <TransactionsContext.Provider value={{
+            transactions, createTransaction
+        }}>
             {children}
         </TransactionsContext.Provider>
     )

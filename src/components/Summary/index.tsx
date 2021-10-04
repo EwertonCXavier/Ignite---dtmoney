@@ -5,7 +5,7 @@ import outcomeImg from '../../assets/saidas.svg';
 import total from '../../assets/total.svg';
 import { TransactionsContext } from '../../TransactionsContext';
 export function Summary() {
-    const transactions = useContext(TransactionsContext); // Define o contexto que receberá a soma das      entradas e saídas
+    const { transactions } = useContext(TransactionsContext); // Define o contexto que receberá a soma das      entradas e saídas
     console.log(transactions);
     return (
         <Container>
