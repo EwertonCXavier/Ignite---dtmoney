@@ -12,6 +12,7 @@ interface Transaction {
     createdAt: string;
 }
 
+// Utilizado para permitir a inserção de filhos no contexto da aplicação
 interface TransactionsProviderProps {
     children: ReactNode; //Aceita qualquer tipo de conteúdo do React (JSX, texto e outros)
 }
@@ -33,7 +34,7 @@ type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>;
 
 interface TransactionsContextData {
     transactions: Transaction[];
-    createTransaction: (transaction: TransactionInput) => void;
+    createTransaction: (transactionInput: TransactionInput) => Promise<void>; // são definidos os dados que são realmente inseridos no popup de cadastro
 }
 
 
@@ -43,8 +44,9 @@ export const TransactionsContext = createContext<TransactionsContextData>(
 )
 
 export function TransactionsProvider({children}: TransactionsProviderProps) {
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [transactions, setTransactions] = useState<Transaction[]>([]); // Hook de estado para armazenar o array de objetos criados pelo popup
 
+    // UseEffect responsável por pegar dados do miragejs
     useEffect(() => {
         api('/transactions')
             .then(response => {
@@ -52,8 +54,19 @@ export function TransactionsProvider({children}: TransactionsProviderProps) {
             });
     }, []);
 
-    function createTransaction(transaction: TransactionInput) {    
-        api.post('/transactions', transaction);
+
+    // função criada para permitir o POST de dados ( é passada através de contexto )
+    async function createTransaction(transactionInput: TransactionInput) {    
+        const response = await api.post('/transactions', {
+            ...transactionInput,
+            createdAt: new Date()
+        });
+        // console.log(Object.keys(response.data));
+        const { transaction } = response.data; //erro do axios com tipagem (0.21.0 atual)
+        setTransactions([
+            ...transactions,
+            transaction
+        ])
     }
 
     return (

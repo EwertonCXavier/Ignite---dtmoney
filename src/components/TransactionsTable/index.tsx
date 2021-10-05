@@ -2,16 +2,8 @@ import { useContext } from 'react';
 import { Container } from './styles';
 import { TransactionsContext } from '../../TransactionsContext';
 
-interface Transaction {
-    id: number;
-    title: string;
-    amount: number;
-    type: string;
-    category: string;
-    createdAt: string;
-}
-
 export function TransactionsTable() {
+    console.log("To aqui depois que saí!")
     const { transactions } = useContext(TransactionsContext); //Remove todo o useEffect e deixa focado no TransactionsContext
     return (
         <Container>
